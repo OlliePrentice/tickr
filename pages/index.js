@@ -1,65 +1,44 @@
+import Container from '../components/container'
+import Layout from '../components/layout'
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import {getAllSpacesForHome} from "../lib/api";
+import SpacePreview from "../components/space-preview";
 
-export default function Home() {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+export default function Index({preview, allSpaces}) {
+    return (
+        <>
+            <Layout preview={preview}>
+                <Head>
+                    <title>tickr | Mumsnet for stocks</title>
+                </Head>
+                <Container>
+                    <div className="pt-4 pr-12 pl-12 max-w-4xl mx-auto relative">
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+                        <h2 className="text-sm text-left font-semibold text-gray-300 mb-4">Featured spaces</h2>
+                        <div className="flex flex-wrap relative z-5 -mx-2">
+                            {allSpaces.map((space) => (
+                                <div key={space.slug} className="w-1/2 px-2 mb-4">
+                                    <SpacePreview
+                                        name={space.name}
+                                        ticker={space.ticker}
+                                        slug={space.slug}
+                                        icon={space.icon}
+                                        excerpt={space.excerpt}
+                                    />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </Container>
+            </Layout>
+        </>
+    )
+}
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+export async function getStaticProps({preview = false}) {
+    const allSpaces = (await getAllSpacesForHome(preview)) ?? []
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
-  )
+    return {
+        props: {preview, allSpaces},
+    }
 }

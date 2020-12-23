@@ -1,0 +1,9 @@
+body {
+    position: relative;
+}
+
+.site-logo {
+    svg {
+        margin-right: .3rem;
+    }
+}
